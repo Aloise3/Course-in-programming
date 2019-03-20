@@ -10,8 +10,8 @@ from sklearn.metrics import mean_squared_error, r2_score
 from sklearn.preprocessing import PolynomialFeatures
 from sklearn.svm import SVR
 
-#Indlæs datasæt
-dataset = pd.read_excel(r"C:\Users\Mads\Desktop\Data project 1\Project growth\datasætudvidele21.xlsx")
+#Indlæs datasæt. Husk at opdatere stien når du skifter mellem computere.
+dataset = pd.read_excel(r"C:\Users\Mads Chrøis\Desktop\KU\Kandidat\Introduction to Programming and Numerical Analysis\Course-in-programming\Data analysis project 1\datasætudvidele21.xlsx")
 
 #Dropper 1950-1958 pga datamangel
 indexNames = dataset[ (dataset['year'] >= 1950) & (dataset['year'] <= 1958) ].index   
