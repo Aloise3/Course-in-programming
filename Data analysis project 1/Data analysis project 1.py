@@ -11,17 +11,33 @@ from sklearn.preprocessing import PolynomialFeatures
 from sklearn.svm import SVR
 
 #Indlæs datasæt. Husk at opdatere stien når du skifter mellem computere.
-dataset = pd.read_excel(r"C:\Users\Mads Chrøis\Desktop\KU\Kandidat\Introduction to Programming and Numerical Analysis\Course-in-programming\Data analysis project 1\datasætudvidele21.xlsx")
+df = pd.read_excel(r"https://github.com/Aloise3/Course-in-programming/blob/master/Data%20analysis%20project%201/datas%C3%A6tudvidele21.xlsx")
+print(df)
 
 #Dropper 1950-1958 pga datamangel
-indexNames = dataset[ (dataset['year'] >= 1950) & (dataset['year'] <= 1958) ].index   
-dataset.drop(indexNames , inplace=True)
+indexNames = df[ (df['year'] >= 1950) & (df['year'] <= 2010) ].index   
+df.drop(indexNames , inplace=True)
+pd.__version__
+print(df)
+print(type(df))
+
+#Grouping
+#data_by_year = df.groupby('country')
+#print(type(data_by_year))
+
+#data_by_year.groups
+
+#for key, value in data_by_year: 
+#    print('Groupname: ', key)
+#    print(value)
+#    print('-----------------------------------------------')
 
 #Konverter til cross sectional data
-#dataset.pivot_table(index=['country'], columns = ['year','rgdpe','popgr', 'csh_i', 'csh_g', 'pl_i', \
-#'rdgpnapc', 'grna', 'gdpgro', 'ppidevgammel', 'pri', 'sec', 'etnony', 'gdpgr', 'gdppc', 'gdpgrwb', 'gdpwb90', 'gdppcwb05', 'tradeqog', 'MENA', 'SSAF', 'LAC', 'WEOFF', 'EECA', 'SEAS', \
-#'ppidevny', 'laam', 'safrica', 'CorruptionPerception', 'PoliticalCorruptionindex', 'ControlofCorruption', \
-#'GovernmentEffectiveness', 'PoliticalStability', 'RuleofLaw', 'RegulatoryQuality'])
+table = pivot_table(df, index=['country',,'rgdpe','popgr', 'csh_i', 'csh_g', 'pl_i', \
+'rdgpnapc', 'grna', 'gdpgro', 'ppidevgammel', 'pri', 'sec', 'etnony', 'gdpgr', 'gdppc', 'gdpgrwb', 'gdpwb90', 'gdppcwb05', 'tradeqog', 'MENA', 'SSAF', 'LAC', 'WEOFF', 'EECA', 'SEAS', \
+'ppidevny', 'laam', 'safrica', 'CorruptionPerception', 'PoliticalCorruptionindex', 'ControlofCorruption', \
+'GovernmentEffectiveness', 'PoliticalStability', 'RuleofLaw', 'RegulatoryQuality'], columns = ['year'])
+
 
 
 
@@ -29,5 +45,5 @@ dataset.drop(indexNames , inplace=True)
 #dataset.dropna(inplace=True)
 
 
-print(dataset)
+
 
