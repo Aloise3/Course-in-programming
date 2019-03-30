@@ -41,8 +41,8 @@ plt.show()
 #Correlation Matrix
 corr = means[['rgdpe', 'popgr', 'csh_i', 'sec', 'pri', 'gdpgr']].corr()
 #corr.style.background_gradient(cmap='coolwarm').set_precision(2)
-sns.heatmap(corr, xticklabels=corr.columns.values, yticklabels=corr.columns.values, annot=True, fmt='.2f')
-#sns.heatmap(corr, vmin=corr.values.min(), vmax=1, square=True, linewidths=0.1, annot=True, annot_kws={"size":8}, fmt='.2f')
+#sns.heatmap(corr, xticklabels=corr.columns.values, yticklabels=corr.columns.values, annot=True, fmt='.2f')
+sns.heatmap(corr, vmin=corr.values.min(), vmax=1, square=True, linewidths=0.1, annot=True, annot_kws={"size":8}, fmt='.2f')
 plt.show()
 
 #OLS
