@@ -3,6 +3,7 @@ import pandas as pd
 import seaborn as sns
 import matplotlib.pyplot as plt
 import matplotlib.cm as cm
+
 import re
 import statsmodels.formula.api as sm
 
@@ -12,59 +13,40 @@ import statsmodels.formula.api as sm
 df = pd.read_excel(r"C:\Course-in-programming\Data analysis project 1\datasætudvidele21.xlsx")
 print(df)
 
-#Dropping 1950-2010 due to inconsistent data
-indexNames = df[ (df['year'] >= 1950) & (df['year'] <= 2009) ].index   
+df.head()
+
+#We see in the head that there is a lot of missing data for Aruba. If we delve deeper into the dataset we will find that this is also the case for many other countries in the 20th century. 
+#Before handling this issue: Our dummy variables for different regions of the world are placed in year 2005. We want to relocate these variables
+
+
+#We're focusing on the last 5 years of data. Most countries are covered and we don't have to constantly be aware that a financial crisis happened, even though the world was still in aftermath
+#Dropping 1950-2010 due to inconsistent data on majority of the variables
+indexNames = df[ (df['year'] >= 1950) & (df['year'] <= 2000) ].index   
 reduced_df = df
 reduced_df.drop(indexNames , inplace=True)
 
 print(reduced_df)
 print(type(reduced_df))
-#Dropping irrelevant variables
-reduced_df.drop(columns=['MENA','SSAF',	'LAC','WEOFF','EECA','SEAS','ppidevny', 'ppidevgammel',	'laam',	'safrica'])
 
-#Long to wide. Not needed as I found out I could take a mean as listed below.
-            #df_wide = df.pivot('country', 'year')
-            #print(df_wide)
             
 #Calculating means for 2010-2014
-means = reduced_df.groupby('country')['rgdpe','popgr', 'csh_i', 'csh_g', 'pl_i', 'gdpgr', 'pri', 'sec', 'gdppc', 'tradeqog', 'CorruptionPerception', 'Political Corruption index', 'Control of Corruption', 'GovernmentEffectiveness', 'PoliticalStability', 'RuleofLaw', 'RegulatoryQuality'].mean()
-print(means)
+means = reduced_df.groupby('country')['rgdpe','popgr', 'csh_i', 'csh_g', 'pl_i', 'gdpgr', 'pri', 'sec', 'gdppc', 'tradeqog', 'CorruptionPerception', 'Political Corruption index', 'Control of Corruption', 'GovernmentEffectiveness', 'PoliticalStability', 'RuleofLaw', 'RegulatoryQuality','MENA','SSAF','LAC','WEOFF','EECA','SEAS'].mean()
+means.head()
+
 #Send to excel so I can verify that there was no screwups
 means.to_excel("Wide_2010-2014.xlsx")
 
-
-#MAKE SCATTER PLOTS
-g1 = means['csh_i']
-g2 = means['popgr']
-g3 = means['gdpgr']
-
-plot_data = (g1, g2, g3)
-colors = ("red", "green", "blue")
-groups = ("Real GDP", "Population growth", "GDP growth")
- 
-fig = plt.figure()
-ax = fig.add_subplot(10, 10, 10, axisbg="1.0")
- 
-for plot_data, color, group in zip(plot_data, colors, groups):
-        x, y = plot_data
-        ax.scatter(x, y, alpha=0.8, c=color, edgecolors='none', s=30, label=group)
- 
-plt.title('Scatter')
-plt.legend(loc=2)
-plt.show()
-
-
 #Pairplot
-#sns.pairplot(means[['rgdpe', 'popgr', 'csh_i', 'sec', 'gdpgr']], dropna=True)
-#plt.show()
-sns.pairplot(means[['popgr', 'csh_i', 'gdpgr']], dropna=True)
+sns.pairplot(means[['gdppc', 'popgr', 'csh_i', 'sec', 'pri', 'gdpgr']], dropna=True)
 plt.show()
 
 #Correlation Matrix
 plt.title("Figure 2: Correlation of growth factors")
-corr = means[['rgdpe', 'popgr', 'csh_i', 'sec', 'pri', 'gdpgr']].corr()
+corr = means[['gdppc', 'popgr', 'csh_i', 'sec', 'pri', 'gdpgr']].corr()
 sns.heatmap(corr, xticklabels=corr.columns.values, yticklabels=corr.columns.values, annot=True, fmt='.2f')
 plt.show()
+
+
 
 
 #OLS
