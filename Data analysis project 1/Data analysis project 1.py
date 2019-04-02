@@ -3,6 +3,7 @@ import pandas as pd
 import seaborn as sns
 import matplotlib.pyplot as plt
 import matplotlib.cm as cm
+import matplotlib.mlab as mlab
 import re
 import statsmodels.formula.api as sm
 
@@ -24,44 +25,65 @@ reduced_df = df
 reduced_df.drop(indexNames , inplace=True)
 
 print(reduced_df)
-print(type(reduced_df))
 
-            
+#Renaming the variables
+reduced_df.rename(columns={'gdppc':'GDPPerCapita'}, inplace=True)
+reduced_df.rename(columns={'csh_i':'Investment'}, inplace=True)
+reduced_df.rename(columns={'popgr':'PopulationGrowth'}, inplace=True)
+reduced_df.rename(columns={'csh_g':'GovernmentExpenditure'}, inplace=True)
+reduced_df.rename(columns={'gdpgr':'GDPGrowth'}, inplace=True)
+reduced_df.rename(columns={'tradeqog':'Trade'}, inplace=True)
+reduced_df.rename(columns={'pl_i':'PPI'}, inplace=True)
 #Calculating means for 2010-2014
-means = reduced_df.groupby('country')['rgdpe','popgr', 'csh_i', 'csh_g', 'pl_i', 'gdpgr', 'pri', 'sec', 'gdppc', 'tradeqog', 'CorruptionPerception', 'Political Corruption index', 'Control of Corruption', 'GovernmentEffectiveness', 'PoliticalStability', 'RuleofLaw', 'RegulatoryQuality'].mean()
+means = reduced_df.groupby('country')['GDPPerCapita', 'PopulationGrowth', 'Investment', 'GovernmentExpenditure', 'PPI', 'GDPGrowth', 'pri', 'sec', 'Trade', 'GovernmentEffectiveness', 'PoliticalStability'].mean()
+#Dropping countries with empty variables
+means = means.dropna(axis=0)
 means.head()
 
 #Send to excel so I can verify that there was no screwups
-means.to_excel("Wide_2010-2014.xlsx")
+means.to_excel("2010-2014.xlsx")
 
-#Adding empty column to reshape PoliticalStability into a indicator
+#Adding empty column to reshape PoliticalStability into a dummy
 #The scale goes from -2.5 to 2.5 by definition. 
-bins_pol = [-2.5, -1.5, -0.5, 0.5, 1.5, 2.5]
-group_names_pol = [1,2,3,4,5]
+bins_pol = [-2.5, 0.5,  2.5]
+group_names_pol = [0, 1]
 means['PolStabInd'] = pd.cut(means['PoliticalStability'], bins_pol, labels=group_names_pol)
-
+print(means)
+sns.jointplot(x="PoliticalStability", y="Investment", data=means)
+plt.show()
+sns.jointplot(x="PoliticalStability", y="sec", data=means)
+plt.show()
+sns.jointplot(x="GovernmentEffectiveness", y="Investment", data=means)
+plt.show()
+sns.jointplot(x="GovernmentEffectiveness", y="sec", data=means)
+plt.show()
 #Scatter
-plt.scatter('PoliticalStability', 'gdpgr', data = means)
+plt.scatter('Investment', 'PopulationGrowth', data = means)
 plt.show()
 
 #Pairplot
-sns.pairplot(means[['gdppc', 'popgr', 'csh_i', 'sec', 'pri', 'gdpgr']], dropna=True)
+sns.pairplot(means[['PopulationGrowth', 'Investment', 'sec', 'GDPGrowth']], dropna=True)
 plt.show()
 
 #Correlation Matrix
 plt.title("Figure 2: Correlation of growth factors")
-corr = means[['gdppc', 'popgr', 'csh_i', 'sec', 'pri', 'gdpgr', 'PoliticalStability']].corr()
+corr = means[['GDPPerCapita', 'PopulationGrowth', 'Investment', 'sec', 'pri', 'GDPGrowth', 'PoliticalStability']].corr()
 sns.heatmap(corr, xticklabels=corr.columns.values, yticklabels=corr.columns.values, annot=True, fmt='.2f')
 plt.show()
 
 #OLS
-result_basic = sm.ols(formula="gdpgr ~ rgdpe + csh_g+ csh_i + pri+ sec + pl_i + popgr ", data=means).fit()
+result_basic = sm.ols(formula="GDPGrowth ~ GovernmentExpenditure + Investment + sec ", data=means).fit()
 print(result_basic.summary())
 
-result_investment = sm.ols(formula = "csh_i ~ sec + pri + popgr + csh_g+ tradeqog", data=means).fit()
-print(result_investment.summary())
+result_basic = sm.ols(formula="GDPGrowth ~  Investment + sec + PoliticalStability + GovernmentExpenditure", data=means).fit()
+print(result_basic.summary())
 
+#Dropping Oil countries
+means_without_oil = means.drop(['Algeria', 'Indonesia', 'Iran', 'Iraq', 'Kuwait', 'Venezuela', 'Ecuador', 'Congo, D.R.'])
+#Gabon, Nigeria, Oman and Saudi Arabia are already dropped
+#OLS
+result_basic_without_oil = sm.ols(formula="GDPGrowth ~  Investment + sec + PoliticalStability + GovernmentExpenditure", data=means_without_oil).fit()
+print(result_basic_without_oil.summary())
 
-
-
-
+result_basic_without_oil = sm.ols(formula="GDPGrowth ~  Investment + sec + PoliticalStability + GovernmentExpenditure", data=means_without_oil).fit()
+print(result_basic_without_oil.summary())
