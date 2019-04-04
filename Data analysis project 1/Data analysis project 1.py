@@ -18,6 +18,7 @@ df.head()
 #Before handling this issue: Our dummy variables for different regions of the world are placed in year 2005. We want to relocate these variables
 
 
+
 #We're focusing on the last 5 years of data. Most countries are covered and we don't have to constantly be aware that a financial crisis happened, even though the world was still in aftermath
 #Dropping 1950-2010 due to inconsistent data on majority of the variables
 indexNames = df[ (df['year'] >= 1950) & (df['year'] <= 2009) ].index   
@@ -65,12 +66,18 @@ plt.show()
 sns.pairplot(means[['PopulationGrowth', 'Investment', 'sec', 'GDPGrowth']], dropna=True)
 plt.show()
 
-#Correlation Matrix
-plt.title("Figure 2: Correlation of growth factors")
-corr = means[['GDPPerCapita', 'PopulationGrowth', 'Investment', 'sec', 'pri', 'GDPGrowth', 'PoliticalStability']].corr()
-sns.heatmap(corr, xticklabels=corr.columns.values, yticklabels=corr.columns.values, annot=True, fmt='.2f')
-plt.show()
+#Defining the title for our correlation matrices
+def title_number(x):
+    title=f"Figure {x}: Correlation of growth factors"
+    return title
 
+#Correlation Matrix
+def corr_matrix(data):
+    corr = data[['GDPPerCapita', 'PopulationGrowth', 'Investment', 'sec', 'pri', 'GDPGrowth', 'PoliticalStability']].corr()
+    sns.heatmap(corr, xticklabels=corr.columns.values, yticklabels=corr.columns.values, annot=True, fmt='.2f')
+    plt.show()
+plt.title(title_number(2))
+corr_matrix(means)
 #OLS
 result_basic = sm.ols(formula="GDPGrowth ~ GovernmentExpenditure + Investment + sec ", data=means).fit()
 print(result_basic.summary())
@@ -81,6 +88,15 @@ print(result_basic.summary())
 #Dropping Oil countries
 means_without_oil = means.drop(['Algeria', 'Indonesia', 'Iran', 'Iraq', 'Kuwait', 'Venezuela', 'Ecuador', 'Congo, D.R.'])
 #Gabon, Nigeria, Oman and Saudi Arabia are already dropped
+
+#Correlation Matrix
+plt.title("Figure 3: Correlation of growth factors")
+corr = means_without_oil[['GDPPerCapita', 'PopulationGrowth', 'Investment', 'sec', 'pri', 'GDPGrowth', 'PoliticalStability']].corr()
+sns.heatmap(corr, xticklabels=corr.columns.values, yticklabels=corr.columns.values, annot=True, fmt='.2f')
+plt.show()
+
+corr_matrix(means_without_oil)
+
 #OLS
 result_basic_without_oil = sm.ols(formula="GDPGrowth ~  Investment + sec + PoliticalStability + GovernmentExpenditure", data=means_without_oil).fit()
 print(result_basic_without_oil.summary())
