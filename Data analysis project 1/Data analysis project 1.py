@@ -76,7 +76,7 @@ def corr_matrix(data):
     corr = data[['GDPPerCapita', 'PopulationGrowth', 'Investment', 'sec', 'pri', 'GDPGrowth', 'PoliticalStability']].corr()
     sns.heatmap(corr, xticklabels=corr.columns.values, yticklabels=corr.columns.values, annot=True, fmt='.2f')
     plt.show()
-plt.title(title_number(2))
+plt.title(title_number(3))
 corr_matrix(means)
 #OLS
 result_basic = sm.ols(formula="GDPGrowth ~ GovernmentExpenditure + Investment + sec ", data=means).fit()
@@ -90,11 +90,7 @@ means_without_oil = means.drop(['Algeria', 'Indonesia', 'Iran', 'Iraq', 'Kuwait'
 #Gabon, Nigeria, Oman and Saudi Arabia are already dropped
 
 #Correlation Matrix
-plt.title("Figure 3: Correlation of growth factors")
-corr = means_without_oil[['GDPPerCapita', 'PopulationGrowth', 'Investment', 'sec', 'pri', 'GDPGrowth', 'PoliticalStability']].corr()
-sns.heatmap(corr, xticklabels=corr.columns.values, yticklabels=corr.columns.values, annot=True, fmt='.2f')
-plt.show()
-
+plt.title(title_number(3))
 corr_matrix(means_without_oil)
 
 #OLS
