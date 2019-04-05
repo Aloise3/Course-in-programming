@@ -4,9 +4,7 @@ import seaborn as sns
 import matplotlib.pyplot as plt
 import matplotlib.cm as cm
 import matplotlib.mlab as mlab
-import re
 import statsmodels.formula.api as sm
-
 
 
 #Indlæs datasæt. Husk at opdatere stien når du skifter mellem computere.
@@ -50,13 +48,10 @@ bins_pol = [-2.5, 0.5,  2.5]
 group_names_pol = [0, 1]
 means['PolStabInd'] = pd.cut(means['PoliticalStability'], bins_pol, labels=group_names_pol)
 print(means)
+
 sns.jointplot(x="PoliticalStability", y="Investment", data=means)
 plt.show()
 sns.jointplot(x="PoliticalStability", y="sec", data=means)
-plt.show()
-sns.jointplot(x="GovernmentEffectiveness", y="Investment", data=means)
-plt.show()
-sns.jointplot(x="GovernmentEffectiveness", y="sec", data=means)
 plt.show()
 #Scatter
 plt.scatter('Investment', 'PopulationGrowth', data = means)
@@ -82,7 +77,7 @@ corr_matrix(means)
 result_basic = sm.ols(formula="GDPGrowth ~ GovernmentExpenditure + Investment + sec ", data=means).fit()
 print(result_basic.summary())
 
-result_basic = sm.ols(formula="GDPGrowth ~  Investment + sec + PoliticalStability + GovernmentExpenditure", data=means).fit()
+result_basic = sm.ols(formula="Investment ~  sec + PoliticalStability + GovernmentExpenditure", data=means).fit()
 print(result_basic.summary())
 
 #Dropping Oil countries
@@ -92,10 +87,11 @@ means_without_oil = means.drop(['Algeria', 'Indonesia', 'Iran', 'Iraq', 'Kuwait'
 #Correlation Matrix
 plt.title(title_number(3))
 corr_matrix(means_without_oil)
-
+print(math.mean("sec"))
 #OLS
 result_basic_without_oil = sm.ols(formula="GDPGrowth ~  Investment + sec + PoliticalStability + GovernmentExpenditure", data=means_without_oil).fit()
 print(result_basic_without_oil.summary())
 
 result_basic_without_oil = sm.ols(formula="GDPGrowth ~  Investment + sec + PoliticalStability + GovernmentExpenditure", data=means_without_oil).fit()
 print(result_basic_without_oil.summary())
+
