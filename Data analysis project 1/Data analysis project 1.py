@@ -49,7 +49,6 @@ def year_plot(y="Investment"):
 year_plot("GovernmentExpenditure")
 year_plot()
 year_plot("PoliticalStability")
-
 #Calculating means for 2010-2014
 means = reduced_df.groupby('country')['GDPPerCapita', 'PopulationGrowth', 'Investment', 'GovernmentExpenditure', 'PPI', 'GDPGrowth', 'pri', 'sec', 'GovernmentEffectiveness', 'PoliticalStability'].mean()
 means.head()
